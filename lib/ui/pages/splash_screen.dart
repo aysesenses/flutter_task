@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 import '../../firebase/firebase_options.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -23,11 +22,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: Constant.backgroundColor,
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Colors.indigo,
-        ),
+        primaryColor: kPrimaryColor,
+        scaffoldBackgroundColor: backgroundColor,
       ),
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),

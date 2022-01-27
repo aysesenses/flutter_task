@@ -41,7 +41,7 @@ class _GetReadyPageState extends State<GetReadyPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Constant.backgroundColor,
+        backgroundColor: backgroundColor,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +56,7 @@ class _GetReadyPageState extends State<GetReadyPage> {
               ),
               Text(
                 "Get Ready",
-                style: Constant.getReadyTextStyle,
+                style: getReadyTextStyle,
               ),
             ],
           ),

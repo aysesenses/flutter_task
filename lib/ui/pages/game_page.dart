@@ -22,7 +22,7 @@ class GamePageState extends State<GamePage> {
   int _score = 0;
   Color _color = Colors.green;
 
-  static List numberList = List.generate(6, (index) => Random().nextInt(10));
+  static List numberList = <int>[];
   static List changeList() => List.generate(6, (index) => Random().nextInt(10));
   static List colorList = Util.colorList;
 
@@ -36,13 +36,14 @@ class GamePageState extends State<GamePage> {
     int target = 0;
     List list = Util.targetRandom();
     int num = 2;
+    debugPrint("target list $numberList");
+
     while (num >= 0) {
       int index = list[num];
       target = numberList[index] + target;
       num--;
     }
-    print("target $target");
-    print("target list ${numberList}");
+    debugPrint("target $target");
     return target;
   }
 
@@ -95,7 +96,7 @@ class GamePageState extends State<GamePage> {
 
   _exitGame() async {
     _timer!.cancel();
-    return _buildExitGameShowAlertDiaolog( _countineGame);
+    return _buildExitGameShowAlertDiaolog(_countineGame);
   }
 
   void _updateTarget() {
@@ -231,89 +232,88 @@ class GamePageState extends State<GamePage> {
     );
   }
 
-
-_buildExitGameShowAlertDiaolog(Function countineGame) {
-  return showDialog(
-    useSafeArea: true,
-    barrierColor: Colors.indigo.withOpacity(0.5),
-    barrierDismissible: false,
-    context: context,
-    builder: (context) => AlertDialog(
-      content: const Text('Do you want to exit game?'),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const RatingPage()),
-            ((route) => false),
+  _buildExitGameShowAlertDiaolog(Function countineGame) {
+    return showDialog(
+      useSafeArea: true,
+      barrierColor: Colors.indigo.withOpacity(0.5),
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text('Do you want to exit game?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const RatingPage()),
+              ((route) => false),
+            ),
+            child: const Text('OK'),
           ),
-          child: const Text('OK'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context, 'Cancel');
-            countineGame();
-          },
-          child: const Text('Cancel'),
-        ),
-      ],
-    ),
-  );
-}
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'Cancel');
+              countineGame();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
 
-_buildTarget() {
-  return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(24),
-      color: Constant.targetBackgroundColor,
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        const Text(
-          "Target",
-          style: Constant.targetTextStyle,
-        ),
-        Text(
-          CalculateScore.numberTarget.toString(),
-          style: Constant.targetNumberTextStyle,
-        ),
-      ],
-    ),
-  );
-}
+  _buildTarget() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: targetBackgroundColor,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            "Target",
+            style: targetTextStyle,
+          ),
+          Text(
+            CalculateScore.numberTarget.toString(),
+            style: targetNumberTextStyle,
+          ),
+        ],
+      ),
+    );
+  }
 
-_buildTimer(int counter) {
-  return Container(
-    margin: const EdgeInsets.all(8),
-    padding: const EdgeInsets.all(4),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      color: Constant.scoreBackgroundColor,
-    ),
-    child: Text(
-      "Timer: $counter",
-      textAlign: TextAlign.center,
-      style: Constant.timerTextStyle,
-    ),
-  );
-}
+  _buildTimer(int counter) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: scoreBackgroundColor,
+      ),
+      child: Text(
+        "Timer: $counter",
+        textAlign: TextAlign.center,
+        style: timerTextStyle,
+      ),
+    );
+  }
 
-_buildScore(int score) {
-  return Container(
-    margin: const EdgeInsets.all(8),
-    padding: const EdgeInsets.all(4),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-      color: Constant.scoreBackgroundColor,
-    ),
-    child: Text(
-      "Score: ${score.toString()}",
-      maxLines: 1,
-      textAlign: TextAlign.center,
-      style: Constant.scoreTextStyle,
-    ),
-  );
-}
+  _buildScore(int score) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: scoreBackgroundColor,
+      ),
+      child: Text(
+        "Score: ${score.toString()}",
+        maxLines: 1,
+        textAlign: TextAlign.center,
+        style: scoreTextStyle,
+      ),
+    );
+  }
 }

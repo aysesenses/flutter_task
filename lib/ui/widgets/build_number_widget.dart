@@ -12,7 +12,7 @@ class BuildNumButton extends StatefulWidget {
   final Function callbackScore;
   final Function callbackTarget;
 
-  BuildNumButton(
+  const BuildNumButton(
       {Key? key,
       required this.number,
       required this.callbackScore,
@@ -36,11 +36,11 @@ class _BuildNumButtonState extends State<BuildNumButton> {
     CalculateScore.calculateScore();
     widget.callbackScore();
     if (CalculateScore.answer == true) {
-      widget.callbackTarget();
       if (!CalculateScore.endGame) {
         widget.callbackList();
         widget.callbackColor();
       }
+       widget.callbackTarget();
       //isButtonDisable = false;
     }
   }
@@ -63,7 +63,7 @@ class _BuildNumButtonState extends State<BuildNumButton> {
         onPressed: isButtonDisable ? null : _buttonFunction,
         child: Text(
           widget.number.toString(),
-          style: Constant.numButtonTextStyle,
+          style: numButtonTextStyle,
         ),
       ),
     );

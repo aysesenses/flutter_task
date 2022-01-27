@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_line/dotted_line.dart';
+import 'package:firebase/constants/constant.dart';
 import 'package:firebase/model/user.dart';
 import 'package:firebase/ui/widgets/users_widget.dart';
 import 'package:flutter/material.dart';
@@ -33,41 +35,143 @@ class _RatingPageState extends State<RatingPage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
+        appBar: buildAppBar(),
         body: Column(
           children: <Widget>[
-            const Expanded(flex: 1, child: Text("best score")),
-            const Expanded(flex: 1, child: Text("your score")),
-            Expanded(
-                flex: 3,
-                child: Container(
-                    margin: const EdgeInsets.all(8),
-                    padding: const EdgeInsets.all(8),
+            SizedBox(
+              height: size.height * 0.2,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: size.height * 0.2 - 27,
                     decoration: BoxDecoration(
-                        color: Colors.indigo.shade300,
-                        borderRadius: BorderRadius.circular(4)),
-                    child: UserInformation())),
+                        color: kPrimaryColor,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(24),
+                          bottomRight: Radius.circular(24),
+                        )),
+                    child: Column(
+                      children: const <Widget>[
+                        ListTile(
+                          leading: Icon(
+                            Icons.emoji_flags_rounded,
+                            size: 56.0,
+                            color: Colors.white,
+                          ),
+                          title: Text(' Your Best Score',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              )),
+                          subtitle: Text(
+                            '9000',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: DottedLine(
+                            direction: Axis.horizontal,
+                            lineLength: double.infinity,
+                            dashLength: 8.0,
+                            dashColor: Colors.white,
+                            dashGapLength: 8.0,
+                            lineThickness: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: const Offset(0, 10),
+                            blurRadius: 50,
+                            color: kPrimaryColor.withOpacity(0.5),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.help_outline_rounded),
+                          SizedBox(width: 16),
+                          Text(
+                            "HOW TO PLAY",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: Container(
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4)),
+                  child: const UserInformation()),
+            ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const GetReadyPage()),
-          ),
-          icon: const Icon(
-            Icons.play_arrow_rounded,
-            size: 36,
-          ),
-          label: const Text(
-            'PLAY',
-            style: TextStyle(
-              fontSize: 20,
-            ),
-          ),
-        ),
+        floatingActionButton: floatingActionButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
+    );
+  }
+
+  FloatingActionButton floatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: kPrimaryColor,
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const GetReadyPage()),
+      ),
+      icon: const Icon(
+        Icons.play_arrow_rounded,
+        size: 36,
+      ),
+      label: const Text(
+        'PLAY',
+        style: TextStyle(
+          fontSize: 20,
+        ),
+      ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      backgroundColor: kPrimaryColor,
+      centerTitle: true,
+      titleTextStyle: const TextStyle(fontSize: 36),
+      title: const Text("NUMBERS"),
+      elevation: 0,
     );
   }
 
@@ -117,8 +221,8 @@ class _RatingPageState extends State<RatingPage> {
 
     return userRef
         .set(User(id: userId, name: name, score: 0, date: Timestamp.now()))
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+        .then((value) => debugPrint("User Added"))
+        .catchError((error) => debugPrint("Failed to add user: $error"));
   }
 
   void writeSharedPrefs() async {
@@ -133,15 +237,14 @@ class _RatingPageState extends State<RatingPage> {
     name = preferences.getString("userName") ??
         _showDialog(context, _myController);
     userID = preferences.getString("userID");
-    print(name);
-    print(userID);
-    setState(() {});
+    debugPrint(name);
+    debugPrint(userID);
   }
 }
 
 class SystemPadding extends StatelessWidget {
   final Widget child;
-  const SystemPadding({required this.child});
+  const SystemPadding({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

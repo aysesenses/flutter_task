@@ -1,6 +1,6 @@
 # firebase
 
-A new Flutter project.
+A new Flutter projectt.
 
 ## Getting Started
 

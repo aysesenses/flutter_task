@@ -36,7 +36,7 @@ class _UserInformationState extends State<UserInformation> {
             return Card(
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: Text("1"),
+                leading: const Text("1"),
                 title: Center(child: Text(data['userName'])),
                 trailing: Text(data['score'].toString()),
               ),

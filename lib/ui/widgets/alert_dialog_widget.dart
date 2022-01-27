@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/constants/constant.dart';
 import 'package:firebase/ui/pages/game_page.dart';
 import 'package:firebase/ui/pages/rating_page.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,12 @@ Future<void> updateScore(int score) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final preferences = await SharedPreferences.getInstance();
   final userID = preferences.getString("userID");
-  
+
   DocumentSnapshot documentSnapshot =
       await _firestore.doc("users/$userID").get();
   Map<String, dynamic> data = documentSnapshot.data()! as Map<String, dynamic>;
   final int oldScore = data["score"];
-  
+
   if (score > oldScore) {
     return _firestore
         .doc("users/$userID")
@@ -23,9 +24,9 @@ Future<void> updateScore(int score) async {
             'date': FieldValue.serverTimestamp(),
           },
         )
-        .then(
-            (value) => print("'full_name' & 'age' merged with existing data!"))
-        .catchError((error) => print("Failed to merge data: $error"));
+        .then((value) =>
+            debugPrint("'full_name' & 'age' merged with existing data!"))
+        .catchError((error) => debugPrint("Failed to merge data: $error"));
   }
 }
 
@@ -51,7 +52,7 @@ alertDialog(BuildContext context, int score) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              color: Colors.indigo,
+              color: kPrimaryColor,
               iconSize: 36,
               onPressed: () {
                 updateScore(score);
@@ -60,10 +61,10 @@ alertDialog(BuildContext context, int score) {
                     MaterialPageRoute(builder: (context) => const RatingPage()),
                     (route) => false);
               },
-              icon: const Icon(Icons.home, color: Colors.indigo),
+              icon: Icon(Icons.home, color: kPrimaryColor),
             ),
             IconButton(
-              color: Colors.indigo,
+              color: kPrimaryColor,
               iconSize: 36,
               onPressed: () {
                 updateScore(score);
