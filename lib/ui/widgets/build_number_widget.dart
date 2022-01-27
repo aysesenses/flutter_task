@@ -1,58 +1,33 @@
 import 'package:firebase/constants/constant.dart';
-import 'package:firebase/utils/calculate_score.dart';
 import 'package:flutter/material.dart';
 
-
-class BuildNumButton extends StatefulWidget {
+class BuildNumButton extends StatelessWidget {
   final int number;
   final Color color;
   final Color buttonColorDisable;
-  final Function callbackColor;
-  final Function callbackList;
-  final Function callbackScore;
-  final Function callbackTarget;
+  final VoidCallback callback;
+  final bool isDisable;
 
-  const BuildNumButton(
-      {Key? key,
-      required this.number,
-      required this.callbackScore,
-      required this.callbackList,
-      required this.callbackTarget,
-      required this.callbackColor,
-      required this.color,
-      required this.buttonColorDisable})
-      : super(key: key);
-
-  @override
-  State<BuildNumButton> createState() => _BuildNumButtonState();
-}
-
-class _BuildNumButtonState extends State<BuildNumButton> {
-  bool isButtonDisable = false;
-
-  void _buttonFunction() {
-    //isButtonDisable = true;
-    CalculateScore.sumNumbers(widget.number);
-    CalculateScore.calculateScore();
-    widget.callbackScore();
-    if (CalculateScore.answer == true) {
-      if (!CalculateScore.endGame) {
-        widget.callbackList();
-        widget.callbackColor();
-      }
-       widget.callbackTarget();
-      //isButtonDisable = false;
-    }
-  }
+ const  BuildNumButton({
+    Key? key,
+    required this.number,
+    required this.color,
+    required this.buttonColorDisable,
+    required this.callback,
+    required this.isDisable,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 150,
-      height: 120,
+      width: 50,
+      height: 50,
       child: TextButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(widget.color),
+          backgroundColor: isDisable
+              ? MaterialStateProperty.all(
+                  buttonColorDisable) //button color green
+              : MaterialStateProperty.all(color),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -60,9 +35,9 @@ class _BuildNumButtonState extends State<BuildNumButton> {
             ),
           ),
         ),
-        onPressed: isButtonDisable ? null : _buttonFunction,
+        onPressed: isDisable ? null : callback,
         child: Text(
-          widget.number.toString(),
+          number.toString(),
           style: numButtonTextStyle,
         ),
       ),

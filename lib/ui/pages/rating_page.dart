@@ -61,7 +61,7 @@ class _RatingPageState extends State<RatingPage> {
                             size: 56.0,
                             color: Colors.white,
                           ),
-                          title: Text(' Your Best Score',
+                          title: Text('Your Best Score',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

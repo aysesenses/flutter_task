@@ -25,7 +25,7 @@ class CalculateScore {
       answer = true;
       endGame = false;
     } else if (result > numberTarget) {
-      //buttonColorRed = true;
+      buttonColorRed = true;
       score = score - 1000;
       answer = true;
       endGame = false;

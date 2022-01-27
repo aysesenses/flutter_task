@@ -17,10 +17,12 @@ class GamePage extends StatefulWidget {
 }
 
 class GamePageState extends State<GamePage> {
-  int _counter = 20;
+  int _counter = 30;
   Timer? _timer;
   int _score = 0;
   Color _color = Colors.green;
+
+  List<int> disableButtons = [];
 
   static List numberList = <int>[];
   static List changeList() => List.generate(6, (index) => Random().nextInt(10));
@@ -29,32 +31,28 @@ class GamePageState extends State<GamePage> {
   void _updateList() {
     _updateButtonColor();
     numberList = changeList();
-    debugPrint("update list $numberList");
   }
 
   static int target() {
     int target = 0;
     List list = Util.targetRandom();
     int num = 2;
-    debugPrint("target list $numberList");
-
     while (num >= 0) {
       int index = list[num];
       target = numberList[index] + target;
       num--;
     }
-    debugPrint("target $target");
     return target;
   }
 
   @override
   void initState() {
     super.initState();
-    _counter = 20;
+    _counter = 30;
     _score = 0;
     _updateList();
     _updateTarget();
-    //_updateButtonColor();
+    _updateButtonColor();
     _startTimer();
   }
 
@@ -148,78 +146,45 @@ class GamePageState extends State<GamePage> {
                   margin: const EdgeInsets.symmetric(vertical: 15),
                   child: Column(
                     children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          BuildNumButton(
-                            buttonColorDisable: _buttonColorRed(),
-                            callbackColor: _updateButtonColor,
-                            color: colorList[0],
-                            number: numberList[0],
-                            callbackScore: _updateScore,
-                            callbackList: _updateList,
-                            callbackTarget: _updateTarget,
-                          ),
-                          const SizedBox(width: 12),
-                          BuildNumButton(
-                            buttonColorDisable: _buttonColorRed(),
-                            callbackColor: _updateButtonColor,
-                            color: colorList[1],
-                            number: numberList[1],
-                            callbackScore: _updateScore,
-                            callbackList: _updateList,
-                            callbackTarget: _updateTarget,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          BuildNumButton(
-                            buttonColorDisable: _buttonColorRed(),
-                            callbackColor: _updateButtonColor,
-                            color: colorList[2],
-                            number: numberList[2],
-                            callbackScore: _updateScore,
-                            callbackList: _updateList,
-                            callbackTarget: _updateTarget,
-                          ),
-                          const SizedBox(width: 12),
-                          BuildNumButton(
-                            buttonColorDisable: _buttonColorRed(),
-                            callbackColor: _updateButtonColor,
-                            color: colorList[3],
-                            number: numberList[3],
-                            callbackScore: _updateScore,
-                            callbackList: _updateList,
-                            callbackTarget: _updateTarget,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          BuildNumButton(
-                            buttonColorDisable: _buttonColorRed(),
-                            callbackColor: _updateButtonColor,
-                            color: colorList[4],
-                            number: numberList[4],
-                            callbackScore: _updateScore,
-                            callbackList: _updateList,
-                            callbackTarget: _updateTarget,
-                          ),
-                          const SizedBox(width: 12),
-                          BuildNumButton(
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: GridView.builder(
+                          padding: const EdgeInsets.all(16),
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.1,
+                                  mainAxisSpacing: 10.0,
+                                  crossAxisSpacing: 10.0,
+                                  mainAxisExtent: 120),
+                          itemCount: 6,
+                          itemBuilder: (context, index) {
+                            return BuildNumButton(
                               buttonColorDisable: _buttonColorRed(),
-                              callbackColor: _updateButtonColor,
-                              color: colorList[5],
-                              number: numberList[5],
-                              callbackScore: _updateScore,
-                              callbackList: _updateList,
-                              callbackTarget: _updateTarget),
-                        ],
+                              color: colorList[index],
+                              number: numberList[index],
+                              isDisable: disableButtons.contains(index),
+                              callback: () {
+                                disableButtons.add(index);
+
+                                CalculateScore.sumNumbers(numberList[index]);
+                                CalculateScore.calculateScore();
+                                _updateScore();
+                                if (CalculateScore.answer) {
+                                  if (!CalculateScore.endGame) {
+                                    disableButtons.clear();
+                                    _updateList();
+                                    _updateButtonColor();
+                                  }
+                                  setState(() {});
+                                  _updateTarget();
+                                }
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
