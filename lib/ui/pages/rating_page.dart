@@ -53,49 +53,81 @@ class _RatingPageState extends State<RatingPage> {
                           bottomLeft: Radius.circular(24),
                           bottomRight: Radius.circular(24),
                         )),
-                    child: Column(
-                      children: const <Widget>[
-                        ListTile(
-                          leading: Icon(
-                            Icons.emoji_flags_rounded,
-                            size: 56.0,
-                            color: Colors.white,
-                          ),
-                          title: Text('Your Best Score',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              )),
-                          subtitle: Text(
-                            '9000',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: DottedLine(
-                            direction: Axis.horizontal,
-                            lineLength: double.infinity,
-                            dashLength: 8.0,
-                            dashColor: Colors.white,
-                            dashGapLength: 8.0,
-                            lineThickness: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: yourBestScore(),
                   ),
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    child: Container(
+                    child: howToPlay(),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: Container(
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4)),
+                  child: const UserInformation()),
+            ),
+          ],
+        ),
+        floatingActionButton: floatingActionButton(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
+    );
+  }
+
+  Column yourBestScore() {
+    return Column(
+                    children: const <Widget>[
+                      ListTile(
+                        leading: Icon(
+                          Icons.emoji_flags_rounded,
+                          size: 56.0,
+                          color: Colors.white,
+                        ),
+                        title: Text('Your Best Score',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            )),
+                        subtitle: Text(
+                          '9000',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: DottedLine(
+                          direction: Axis.horizontal,
+                          lineLength: double.infinity,
+                          dashLength: 8.0,
+                          dashColor: Colors.white,
+                          dashGapLength: 8.0,
+                          lineThickness: 0.5,
+                        ),
+                      ),
+                    ],
+                  );
+  }
+
+  GestureDetector howToPlay() {
+    return GestureDetector(
+      onTap: () => (){},
+      child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       height: 48,
@@ -121,27 +153,6 @@ class _RatingPageState extends State<RatingPage> {
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4)),
-                  child: const UserInformation()),
-            ),
-          ],
-        ),
-        floatingActionButton: floatingActionButton(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
     );
   }
 

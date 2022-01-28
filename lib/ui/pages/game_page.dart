@@ -21,6 +21,7 @@ class GamePageState extends State<GamePage> {
   Timer? _timer;
   int _score = 0;
   Color _color = Colors.green;
+  bool _correct = true;
 
   List<int> disableButtons = [];
 
@@ -54,6 +55,8 @@ class GamePageState extends State<GamePage> {
     _updateTarget();
     _updateButtonColor();
     _startTimer();
+
+    print("result ${CalculateScore.result}");
   }
 
   void _startTimer() {
@@ -79,6 +82,7 @@ class GamePageState extends State<GamePage> {
   void _updateScore() {
     setState(() {
       _score = CalculateScore.score;
+
       if (_score < 0) {
         _score = 0;
         CalculateScore.endGame = true;
@@ -166,7 +170,7 @@ class GamePageState extends State<GamePage> {
                               color: colorList[index],
                               number: numberList[index],
                               isDisable: disableButtons.contains(index),
-                              callback: () {
+                              callback: () async {
                                 disableButtons.add(index);
 
                                 CalculateScore.sumNumbers(numberList[index]);
@@ -174,12 +178,19 @@ class GamePageState extends State<GamePage> {
                                 _updateScore();
                                 if (CalculateScore.answer) {
                                   if (!CalculateScore.endGame) {
+                                    _showAnswerDialog(context);
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 1000), () {
+                                      Navigator.pop(context);
+                                    });
+
                                     disableButtons.clear();
                                     _updateList();
                                     _updateButtonColor();
                                   }
-                                  setState(() {});
                                   _updateTarget();
+                                } else {
+                                  _color = Colors.green;
                                 }
                               },
                             );
@@ -195,6 +206,36 @@ class GamePageState extends State<GamePage> {
         ),
       ),
     );
+  }
+
+  _showAnswerDialog(BuildContext context) {
+    return showGeneralDialog(
+        barrierColor: CalculateScore.buttonColorRed
+            ? Colors.redAccent.withOpacity(0.2)
+            : Colors.greenAccent.withOpacity(0.2),
+        transitionBuilder: (context, a1, a2, widget) {
+          return Transform.scale(
+            scale: a1.value,
+            child: Opacity(
+              opacity: a1.value,
+              child: Icon(
+                CalculateScore.buttonColorRed
+                    ? Icons.close_rounded
+                    : Icons.check_rounded,
+                size: 150,
+                color: CalculateScore.buttonColorRed
+                    ? Colors.red.shade900
+                    : Colors.green.shade900,
+              ),
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+        barrierDismissible: false,
+        context: context,
+        pageBuilder: (context, animation1, animation2) {
+          return Container();
+        });
   }
 
   _buildExitGameShowAlertDiaolog(Function countineGame) {
