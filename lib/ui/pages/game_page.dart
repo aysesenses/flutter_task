@@ -17,11 +17,10 @@ class GamePage extends StatefulWidget {
 }
 
 class GamePageState extends State<GamePage> {
-  int _counter = 30;
+  int _counter = 10;
   Timer? _timer;
   int _score = 0;
   Color _color = Colors.green;
-  bool _correct = true;
 
   List<int> disableButtons = [];
 
@@ -55,8 +54,6 @@ class GamePageState extends State<GamePage> {
     _updateTarget();
     _updateButtonColor();
     _startTimer();
-
-    print("result ${CalculateScore.result}");
   }
 
   void _startTimer() {
@@ -65,6 +62,8 @@ class GamePageState extends State<GamePage> {
         if (_counter > 0) {
           _counter--;
         } else {
+          CalculateScore.score = 0;
+          CalculateScore.endGame = true;
           _timer!.cancel();
           alertDialog(context, _score);
         }
@@ -82,7 +81,6 @@ class GamePageState extends State<GamePage> {
   void _updateScore() {
     setState(() {
       _score = CalculateScore.score;
-
       if (_score < 0) {
         _score = 0;
         CalculateScore.endGame = true;
@@ -176,6 +174,7 @@ class GamePageState extends State<GamePage> {
                                 CalculateScore.sumNumbers(numberList[index]);
                                 CalculateScore.calculateScore();
                                 _updateScore();
+
                                 if (CalculateScore.answer) {
                                   if (!CalculateScore.endGame) {
                                     _showAnswerDialog(context);

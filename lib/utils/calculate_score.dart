@@ -11,7 +11,6 @@ class CalculateScore {
   static int changeTarget() {
     answer = false;
     result = 0;
-    //buttonColorRed = false;
     return numberTarget = GamePageState.target();
   }
 
@@ -20,7 +19,7 @@ class CalculateScore {
   }
 
   static int calculateScore() {
-      buttonColorRed = false;
+    buttonColorRed = false;
     if (result == numberTarget) {
       score = score + 1000;
       answer = true;
