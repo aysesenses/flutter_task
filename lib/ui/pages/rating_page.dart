@@ -17,7 +17,8 @@ class RatingPage extends StatefulWidget {
 
 class _RatingPageState extends State<RatingPage> {
   String? name;
-  String? userID;
+  static String? userID;
+  int? userBestScore;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   final TextEditingController _myController = TextEditingController();
 
@@ -39,44 +40,69 @@ class _RatingPageState extends State<RatingPage> {
     return SafeArea(
       child: Scaffold(
         appBar: buildAppBar(),
-        body: Column(
-          children: <Widget>[
-            SizedBox(
-              height: size.height * 0.2,
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    height: size.height * 0.2 - 27,
-                    decoration: BoxDecoration(
-                        color: kPrimaryColor,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(24),
-                          bottomRight: Radius.circular(24),
-                        )),
-                    child: yourBestScore(),
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(userID)
+              .snapshots(),
+          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Text("Something went wrong");
+            }
+
+            if (snapshot.hasData && !snapshot.data!.exists) {
+              return const Center(
+                child: Text(
+                  "LET's GET PLAY GAME",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: howToPlay(),
+                ),
+              );
+            }
+            
+            return Column(
+              children: <Widget>[
+                SizedBox(
+                  height: size.height * 0.2,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        height: size.height * 0.2 - 27,
+                        decoration: BoxDecoration(
+                            color: kPrimaryColor,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(24),
+                              bottomRight: Radius.circular(24),
+                            )),
+                        child: yourBestScore(snapshot.data?["score"]),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: howToPlay(),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4)),
-                  child: const UserInformation()),
-            ),
-          ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: Container(
+                      margin: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4)),
+                      child: const UserInformation()),
+                ),
+                const SizedBox(height: 60),
+              ],
+            );
+          },
         ),
         floatingActionButton: floatingActionButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -84,75 +110,73 @@ class _RatingPageState extends State<RatingPage> {
     );
   }
 
-  Column yourBestScore() {
+  Column yourBestScore(int? score) {
     return Column(
-                    children: const <Widget>[
-                      ListTile(
-                        leading: Icon(
-                          Icons.emoji_flags_rounded,
-                          size: 56.0,
-                          color: Colors.white,
-                        ),
-                        title: Text('Your Best Score',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            )),
-                        subtitle: Text(
-                          '9000',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                        ),
-                        child: DottedLine(
-                          direction: Axis.horizontal,
-                          lineLength: double.infinity,
-                          dashLength: 8.0,
-                          dashColor: Colors.white,
-                          dashGapLength: 8.0,
-                          lineThickness: 0.5,
-                        ),
-                      ),
-                    ],
-                  );
+      children: <Widget>[
+        ListTile(
+          leading: const Icon(
+            Icons.emoji_flags_rounded,
+            size: 56.0,
+            color: Colors.white,
+          ),
+          title: const Text('Your Best Score',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              )),
+          subtitle: Text(
+            score != null ? score.toString() : '0',
+            style: const TextStyle(
+                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+          ),
+          child: DottedLine(
+            direction: Axis.horizontal,
+            lineLength: double.infinity,
+            dashLength: 8.0,
+            dashColor: Colors.white,
+            dashGapLength: 8.0,
+            lineThickness: 0.5,
+          ),
+        ),
+      ],
+    );
   }
 
   GestureDetector howToPlay() {
     return GestureDetector(
-      onTap: () => (){},
+      onTap: () => () {},
       child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 10),
-                            blurRadius: 50,
-                            color: kPrimaryColor.withOpacity(0.5),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.help_outline_rounded),
-                          SizedBox(width: 16),
-                          Text(
-                            "HOW TO PLAY",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              offset: const Offset(0, 10),
+              blurRadius: 50,
+              color: kPrimaryColor.withOpacity(0.5),
+            ),
+          ],
+        ),
+        child: Row(
+          children: const [
+            Icon(Icons.help_outline_rounded),
+            SizedBox(width: 16),
+            Text(
+              "HOW TO PLAY",
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -189,6 +213,7 @@ class _RatingPageState extends State<RatingPage> {
   _showDialog(
       BuildContext context, TextEditingController textController) async {
     await showDialog<String>(
+      barrierDismissible: false,
       context: context,
       builder: (context) => SystemPadding(
         child: AlertDialog(
@@ -248,6 +273,7 @@ class _RatingPageState extends State<RatingPage> {
     name = preferences.getString("userName") ??
         _showDialog(context, _myController);
     userID = preferences.getString("userID");
+    initState();
     debugPrint(name);
     debugPrint(userID);
   }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/constants/constant.dart';
 import 'package:firebase/ui/pages/game_page.dart';
+import 'package:firebase/ui/pages/get_ready_page.dart';
 import 'package:firebase/ui/pages/rating_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,7 +70,7 @@ alertDialog(BuildContext context, int score) {
               onPressed: () {
                 updateScore(score);
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const GamePage()));
+                    MaterialPageRoute(builder: (context) => const GetReadyPage()));
               },
               icon: const Icon(Icons.refresh),
             ),

@@ -27,7 +27,6 @@ class _UserInformationState extends State<UserInformation> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         }
-
         return ListView(
           shrinkWrap: true,
           children: snapshot.data!.docs.map((DocumentSnapshot document) {
@@ -36,7 +35,10 @@ class _UserInformationState extends State<UserInformation> {
             return Card(
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                leading: const Text("1"),
+                leading: const Icon(
+                  Icons.emoji_events_rounded,
+                  color: Colors.indigo,
+                ),
                 title: Center(child: Text(data['userName'])),
                 trailing: Text(data['score'].toString()),
               ),
