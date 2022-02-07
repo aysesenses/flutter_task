@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:firebase/constants/constant.dart';
-import 'package:firebase/model/user.dart';
+import 'package:firebase/services/shared_pref_services.dart';
 import 'package:firebase/ui/widgets/users_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'get_ready_page.dart';
 
@@ -19,19 +18,29 @@ class _RatingPageState extends State<RatingPage> {
   String? name;
   static String? userID;
   int? userBestScore;
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final _service = SharedPreferenceService();
+
   final TextEditingController _myController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    readSharedPrefs();
+    _readData();
   }
 
   @override
   void dispose() {
     _myController.dispose();
     super.dispose();
+  }
+
+  void _readData() async {
+    userID = await _service.readSharedPrefs();
+    setState(() {
+      if (userID == null) {
+        _showDialog(context, _myController);
+      }
+    });
   }
 
   @override
@@ -61,7 +70,7 @@ class _RatingPageState extends State<RatingPage> {
                 ),
               );
             }
-            
+
             return Column(
               children: <Widget>[
                 SizedBox(
@@ -236,46 +245,13 @@ class _RatingPageState extends State<RatingPage> {
             TextButton(
                 child: const Text('SAVE'),
                 onPressed: () {
-                  writeSharedPrefs();
+                  _service.writeSharedPrefs(_myController.text);
                   Navigator.pop(context);
                 })
           ],
         ),
       ),
     );
-  }
-
-  Future<void> addUser({required String name}) async {
-    String userId = users.doc().id;
-    final preferences = await SharedPreferences.getInstance();
-    preferences.setString("userID", userId);
-
-    final userRef = users.doc(userId).withConverter<User>(
-          fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
-          toFirestore: (users, _) => users.toJson(),
-        );
-
-    return userRef
-        .set(User(id: userId, name: name, score: 0, date: Timestamp.now()))
-        .then((value) => debugPrint("User Added"))
-        .catchError((error) => debugPrint("Failed to add user: $error"));
-  }
-
-  void writeSharedPrefs() async {
-    final _name = _myController.text;
-    final preferences = await SharedPreferences.getInstance();
-    preferences.setString("userName", _name);
-    addUser(name: _name);
-  }
-
-  void readSharedPrefs() async {
-    final preferences = await SharedPreferences.getInstance();
-    name = preferences.getString("userName") ??
-        _showDialog(context, _myController);
-    userID = preferences.getString("userID");
-    initState();
-    debugPrint(name);
-    debugPrint(userID);
   }
 }
 
